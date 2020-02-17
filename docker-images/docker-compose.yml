@@ -1,0 +1,14 @@
+version: '3'
+services:
+
+  fitness-notes-postgres:
+    restart: on-failure
+    image: postgres
+    ports:
+      - "35432:5432"
+    volumes:
+      - /var/lib/fitness-notes/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "coweery"
+      POSTGRES_PASSWORD: "coweery2020"
+      POSTGRES_DB: "fitness_notes"
