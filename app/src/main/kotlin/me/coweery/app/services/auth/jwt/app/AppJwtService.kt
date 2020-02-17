@@ -1,4 +1,4 @@
-package me.coweery.app.services.auth.app
+package me.coweery.app.services.auth.jwt.app
 
 import me.coweery.app.models.JwtPayload
 

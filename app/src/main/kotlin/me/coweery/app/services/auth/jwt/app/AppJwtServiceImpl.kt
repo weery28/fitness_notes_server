@@ -1,4 +1,4 @@
-package me.coweery.app.services.auth.app
+package me.coweery.app.services.auth.jwt.app
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -6,8 +6,7 @@ import me.coweery.app.exceptions.AuthenticationException
 import me.coweery.app.models.JwtPayload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.lang.Exception
-import java.util.*
+import java.util.Date
 
 @Service
 class AppJwtServiceImpl : AppJwtService {

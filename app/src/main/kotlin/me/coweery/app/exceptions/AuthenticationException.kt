@@ -1,3 +1,3 @@
 package me.coweery.app.exceptions
 
-class AuthenticationException(message: String): UserException(message)
+class AuthenticationException(message: String) : UserException(message)

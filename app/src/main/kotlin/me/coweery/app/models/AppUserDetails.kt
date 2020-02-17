@@ -8,7 +8,7 @@ class AppUserDetails(
     email: String,
     password: String,
     authorities: List<GrantedAuthority> = emptyList()
-): User(
+) : User(
     email,
     password,
     true,

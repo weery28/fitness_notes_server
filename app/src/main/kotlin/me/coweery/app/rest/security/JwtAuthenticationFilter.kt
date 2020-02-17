@@ -1,7 +1,7 @@
 package me.coweery.app.rest.security
 
 import me.coweery.app.config.SecurityConfiguration.Companion.AUTH_HEADER
-import me.coweery.app.services.auth.app.AppJwtService
+import me.coweery.app.services.auth.jwt.app.AppJwtService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder

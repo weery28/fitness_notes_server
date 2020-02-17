@@ -2,7 +2,7 @@ package me.coweery.app.services.auth
 
 import me.coweery.app.models.AppUserDetails
 import me.coweery.app.models.JwtPayload
-import me.coweery.app.services.auth.app.AppJwtService
+import me.coweery.app.services.auth.jwt.app.AppJwtService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.authentication.AuthenticationManager
