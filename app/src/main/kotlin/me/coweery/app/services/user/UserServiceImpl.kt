@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-@Lazy
 class UserServiceImpl @Autowired constructor(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
