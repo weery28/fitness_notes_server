@@ -48,6 +48,7 @@ open class WebSecurityConfiguration @Autowired constructor(
             .authorizeRequests()
             .antMatchers(HttpMethod.POST, "/login").permitAll()
             .antMatchers(HttpMethod.POST, "/login-google").permitAll()
+            .antMatchers(HttpMethod.POST, "/users").permitAll()
             .anyRequest().authenticated()
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
