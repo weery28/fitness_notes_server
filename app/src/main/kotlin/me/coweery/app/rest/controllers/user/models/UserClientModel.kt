@@ -7,5 +7,5 @@ class UserClientModel(
     val id: Long,
 
     @JsonProperty("email")
-    val login: String
+    val email: String
 )
