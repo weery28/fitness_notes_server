@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Migrate') {
             steps {
-                sh './gradlew migrateLocal'
+                sh './gradlew flywayMigrateLocal'
             }
         }
 
