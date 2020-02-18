@@ -5,4 +5,4 @@ services:
     image: 127.0.0.1:5000/fitness-notes
     network_mode: "host"
     ports:
-      - "8080:8080"
+      - "38080:38080"
