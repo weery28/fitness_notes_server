@@ -1,0 +1,8 @@
+version: '3'
+services:
+  fitness-notes-1:
+    restart: on-failure
+    image: 127.0.0.1:5000/fitness-notes
+    network_mode: "host"
+    ports:
+      - "38080:38080"
