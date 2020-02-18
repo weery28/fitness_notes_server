@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    environment {
+        REGISTRY_URL = "http://127.0.0.1:5000"
+        REGISTRY_CREDENTIALS_ID = "jenkins-registry"
+        IMAGE_NAME = "fitness-notes"
+        DOCKER_HOST = "unix:///var/run/docker.sock"
+        DOCKERFILE_PATH = "./app"
+    }
+
+    stages {
+        stage('Migrate') {
+            steps {
+                sh './gradlew migrateLocal'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh './gradlew build'
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                script {
+                    docker.withRegistry(REGISTRY_URL, REGISTRY_CREDENTIALS_ID) {
+                        def image = docker.build(IMAGE_NAME, DOCKERFILE_PATH)
+                        image.push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'cd app && docker-compose up -d'
+                }
+            }
+        }
+    }
+}
