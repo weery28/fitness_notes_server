@@ -3,6 +3,7 @@ package me.coweery.app.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import me.coweery.app.exceptions.AuthenticationException
 import me.coweery.app.exceptions.InvalidInputException
+import me.coweery.app.exceptions.NotFoundException
 import me.coweery.app.exceptions.UserException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -20,9 +21,10 @@ class ExceptionHandlerControllerAdvice : ResponseEntityExceptionHandler() {
     @ExceptionHandler(UserException::class)
     fun handleUserException(ex: UserException, request: WebRequest): ResponseEntity<Any> {
 
-        val status = when(ex) {
+        val status = when (ex) {
             is InvalidInputException -> HttpStatus.BAD_REQUEST
             is AuthenticationException -> HttpStatus.UNAUTHORIZED
+            is NotFoundException -> HttpStatus.NOT_FOUND
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
 

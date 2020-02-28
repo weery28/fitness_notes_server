@@ -1,4 +1,4 @@
-package me.coweery.app.models
+package me.coweery.app.models.training
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -11,20 +11,20 @@ import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity
-@Table(name = "exercise_plan")
-class ExercisePlan(
+@Table(name = "exercises")
+class Exercise(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     val id: Long?,
 
-    @ManyToOne
-    @JoinColumn(name = "exercise_id")
-    val exercise: Exercise,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_description_id")
+    val exerciseDescription: ExerciseDescription,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "training_plan_id")
-    val trainingPlan: TrainingPlan,
+    @JoinColumn(name = "training_id")
+    val training: Training,
 
     @Column(name = "approaches_count")
     val approachesCount: Int,

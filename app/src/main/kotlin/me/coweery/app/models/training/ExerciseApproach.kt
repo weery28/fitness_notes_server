@@ -1,25 +1,29 @@
-package me.coweery.app.models
+package me.coweery.app.models.training
 
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
 import javax.persistence.Table
 
 @Entity
-@Table(name = "training_plans")
-class TrainingPlan(
+@Table(name = "exercise_approaches")
+class ExerciseApproach(
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(name = "user_id")
-    val userId: Long,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_id")
+    val exercise: Exercise,
 
-    @OneToMany(mappedBy = "trainingPlan")
+    @Column(name = "repetitions_count")
+    val repetitionsCount: Int,
+
+    @Column(name = "weight")
+    val weight: Float
 )
