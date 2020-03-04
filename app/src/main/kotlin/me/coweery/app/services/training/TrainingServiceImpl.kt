@@ -11,7 +11,7 @@ class TrainingServiceImpl @Autowired constructor(
     private val trainingRepository: TrainingRepository
 ) : TrainingService {
 
-    override fun create(training: Training): Training {
+    override fun save(training: Training): Training {
 
         return trainingRepository.findByUserIdAndCreationTime(training.userId, training.creationTime)
             ?: trainingRepository.save(training)

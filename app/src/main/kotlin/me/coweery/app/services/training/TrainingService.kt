@@ -4,7 +4,7 @@ import me.coweery.app.models.training.Training
 
 interface TrainingService {
 
-    fun create(training: Training): Training
+    fun save(training: Training): Training
 
     fun update(training: Training): Training
 }
