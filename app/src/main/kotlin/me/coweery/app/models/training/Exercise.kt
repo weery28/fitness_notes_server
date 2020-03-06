@@ -24,7 +24,7 @@ class Exercise(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_id")
-    val training: Training,
+    val training: Training?,
 
     @Column(name = "approaches_count")
     val approachesCount: Int,

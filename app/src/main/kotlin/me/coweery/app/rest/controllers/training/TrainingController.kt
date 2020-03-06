@@ -4,6 +4,7 @@ import me.coweery.app.models.AuthenticatedUser
 import me.coweery.app.models.training.Training
 import me.coweery.app.rest.controllers.training.models.SaveTrainingRequest
 import me.coweery.app.rest.controllers.training.models.TrainingClientModel
+import me.coweery.app.services.training.SavingTrainingParams
 import me.coweery.app.services.training.TrainingService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,12 +27,25 @@ class TrainingController @Autowired constructor(
         return request.validate()
             .let {
                 trainingService.save(
-                    Training(
+                    SavingTrainingParams(
+                        request.name!!,
+                        request.creationTime!!,
+                        request.exercises.map {
+                            SavingTrainingParams.Exercise(
+                                it.name!!,
+                                it.approachesCount!!,
+                                it.weight!!,
+                                it.repetitionsCount!!
+                            )
+                        }
+                    ),
+                    user.id
+                )
+            }
+            .let {
+                TrainingClientModel(
 
-                    )
                 )
             }
     }
-
-    private fun mapToClientModel
 }
