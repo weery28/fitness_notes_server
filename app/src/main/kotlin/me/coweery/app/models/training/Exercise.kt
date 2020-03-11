@@ -16,22 +16,22 @@ class Exercise(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long?,
+    var id: Long?,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "exercise_description_id")
     val exerciseDescription: ExerciseDescription,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_id")
-    val training: Training?,
+    var training: Training?,
 
-    @Column(name = "approaches_count")
-    val approachesCount: Int,
+    @Column(name = "sets_count")
+    val setsCount: Int,
 
     @Column(name = "weight")
     val weight: Float,
 
-    @Column(name = "repetitions_count")
-    val repetitionsCount: Int
+    @Column(name = "reps_count")
+    val repsCount: Int
 )

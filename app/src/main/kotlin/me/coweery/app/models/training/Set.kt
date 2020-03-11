@@ -11,8 +11,8 @@ import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity
-@Table(name = "exercise_approaches")
-class ExerciseApproach(
+@Table(name = "sets")
+class Set(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -21,8 +21,8 @@ class ExerciseApproach(
     @JoinColumn(name = "exercise_id")
     val exercise: Exercise,
 
-    @Column(name = "repetitions_count")
-    val repetitionsCount: Int,
+    @Column(name = "reps_count")
+    val repsCount: Int,
 
     @Column(name = "weight")
     val weight: Float

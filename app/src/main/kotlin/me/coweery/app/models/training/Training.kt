@@ -31,6 +31,6 @@ class Training(
     @Column(name = "creation_time")
     val creationTime: Date,
 
-    @OneToMany(mappedBy = "training", fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
-    val exercises: List<Exercise>
+    @OneToMany(mappedBy = "training", fetch = FetchType.EAGER, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    var exercises: List<Exercise> = emptyList()
 )

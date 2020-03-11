@@ -1,7 +1,6 @@
 package me.coweery.app.rest.controllers.training
 
 import me.coweery.app.models.AuthenticatedUser
-import me.coweery.app.models.training.Training
 import me.coweery.app.rest.controllers.training.models.SaveTrainingRequest
 import me.coweery.app.rest.controllers.training.models.TrainingClientModel
 import me.coweery.app.services.training.SavingTrainingParams
@@ -33,9 +32,9 @@ class TrainingController @Autowired constructor(
                         request.exercises.map {
                             SavingTrainingParams.Exercise(
                                 it.name!!,
-                                it.approachesCount!!,
+                                it.setsCount!!,
                                 it.weight!!,
-                                it.repetitionsCount!!
+                                it.repsCount!!
                             )
                         }
                     ),

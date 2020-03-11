@@ -10,8 +10,8 @@ class SavingTrainingParams(
 
     class Exercise(
         val name: String,
-        val approachesCount: Int,
+        val setsCount: Int,
         val weight: Float,
-        val repetitionsCount: Int
+        val repsCount: Int
     )
 }

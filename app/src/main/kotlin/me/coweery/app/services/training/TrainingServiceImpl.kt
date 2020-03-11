@@ -5,6 +5,7 @@ import me.coweery.app.models.training.Exercise
 import me.coweery.app.models.training.ExerciseDescription
 import me.coweery.app.models.training.Training
 import me.coweery.app.repositories.ExerciseDescriptionRepository
+import me.coweery.app.repositories.ExerciseRepository
 import me.coweery.app.repositories.TrainingRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -13,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 open class TrainingServiceImpl @Autowired constructor(
     private val trainingRepository: TrainingRepository,
-    private val exerciseDescriptionRepository: ExerciseDescriptionRepository
+    private val exerciseDescriptionRepository: ExerciseDescriptionRepository,
+    private val exerciseRepository: ExerciseRepository
 ) : TrainingService {
 
     override fun save(training: Training): Training {
@@ -35,9 +37,12 @@ open class TrainingServiceImpl @Autowired constructor(
     override fun save(trainingParams: SavingTrainingParams, userId: Long): Training {
 
         val existingTraining = trainingRepository.findByUserIdAndCreationTime(userId, trainingParams.creationTime)
-        val exerciseNames = trainingParams.exercises.map { it.name }
-        val existingDescriptions = exerciseDescriptionRepository.getAllByNameIn(exerciseNames)
-            .associateBy { it.name }
+
+        val t = existingTraining?.exercises?.firstOrNull()?.id
+
+        val existingDescriptions = exerciseDescriptionRepository.getAllByNameIn(
+            trainingParams.exercises.map { it.name }
+        ).associateBy { it.name }
 
         val exercises = trainingParams.exercises.map {
             Exercise(
@@ -49,11 +54,15 @@ open class TrainingServiceImpl @Autowired constructor(
                     )
                 ),
                 null,
-                it.approachesCount,
+                it.setsCount,
                 it.weight,
-                it.repetitionsCount
+                it.repsCount
             )
         }
+
+        existingTraining?.exercises
+            ?.map { it.id!! }
+            ?.let { exerciseRepository.deleteByIdIn(it) }
 
         return trainingRepository.save(
             Training(
@@ -63,7 +72,9 @@ open class TrainingServiceImpl @Autowired constructor(
                 false,
                 trainingParams.creationTime,
                 exercises
-            )
+            ).apply {
+                this.exercises.forEach { it.training = this }
+            }
         )
     }
 }

@@ -10,5 +10,7 @@ interface TrainingRepository : JpaRepository<Training, Long> {
 
     fun findByUserIdAndCreationTime(userId: Long, creationTime: Date): Training?
 
+    fun findAllByUserIdAndCreationTime(userId: Long, creationTime: Date): Training?
+
     fun existsByIdAndUserId(id: Long, userId: Long): Boolean
 }
