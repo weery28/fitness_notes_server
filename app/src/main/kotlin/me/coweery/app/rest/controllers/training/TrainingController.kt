@@ -1,9 +1,9 @@
 package me.coweery.app.rest.controllers.training
 
 import me.coweery.app.models.AuthenticatedUser
-import me.coweery.app.rest.controllers.training.models.SaveTrainingRequest
+import me.coweery.app.rest.controllers.training.models.TrainingRequest
 import me.coweery.app.rest.controllers.training.models.TrainingClientModel
-import me.coweery.app.services.training.SavingTrainingParams
+import me.coweery.app.services.training.SaveTrainingParams
 import me.coweery.app.services.training.TrainingService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,18 +19,18 @@ class TrainingController @Autowired constructor(
 
     @PostMapping
     fun create(
-        @RequestBody request: SaveTrainingRequest,
+        @RequestBody request: TrainingRequest,
         user: AuthenticatedUser
     ): TrainingClientModel {
 
         return request.validate()
             .let {
                 trainingService.save(
-                    SavingTrainingParams(
+                    SaveTrainingParams(
                         request.name!!,
                         request.creationTime!!,
                         request.exercises.map {
-                            SavingTrainingParams.Exercise(
+                            SaveTrainingParams.Exercise(
                                 it.name!!,
                                 it.setsCount!!,
                                 it.weight!!,

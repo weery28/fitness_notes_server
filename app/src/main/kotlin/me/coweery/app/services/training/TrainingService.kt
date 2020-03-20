@@ -8,5 +8,5 @@ interface TrainingService {
 
     fun update(training: Training): Training
 
-    fun save(trainingParams: SavingTrainingParams, userId: Long): Training
+    fun save(saveTrainingParams: SaveTrainingParams, userId: Long): Training
 }

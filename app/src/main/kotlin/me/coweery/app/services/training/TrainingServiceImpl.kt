@@ -3,6 +3,7 @@ package me.coweery.app.services.training
 import me.coweery.app.exceptions.NotFoundException
 import me.coweery.app.models.training.Exercise
 import me.coweery.app.models.training.ExerciseDescription
+import me.coweery.app.models.training.Set
 import me.coweery.app.models.training.Training
 import me.coweery.app.repositories.ExerciseDescriptionRepository
 import me.coweery.app.repositories.ExerciseRepository
@@ -34,17 +35,33 @@ open class TrainingServiceImpl @Autowired constructor(
     }
 
     @Transactional
-    override fun save(trainingParams: SavingTrainingParams, userId: Long): Training {
+    override fun save(saveTrainingParams: SaveTrainingParams, userId: Long): Training {
 
-        val existingTraining = trainingRepository.findByUserIdAndCreationTime(userId, trainingParams.creationTime)
+        val existingTraining = trainingRepository.findByUserIdAndCreationTime(userId, saveTrainingParams.creationTime)
+
+        if (existingTraining != null) {
+            val exercisesForSaving = saveTrainingParams.saveExerciseParams
+                .filter { saveExerciseParams ->
+                    existingTraining.exercises.firstOrNull { equalExercises(it, saveExerciseParams) } == null
+                }
+
+            val exercisesForDeleting = existingTraining.exercises
+                .filter { existingExercise ->
+                    saveTrainingParams.saveExerciseParams.firstOrNull { equalExercises(existingExercise, it) } == null
+                }
+        } else {
+
+        }
+
+
 
         val t = existingTraining?.exercises?.firstOrNull()?.id
 
         val existingDescriptions = exerciseDescriptionRepository.getAllByNameIn(
-            trainingParams.exercises.map { it.name }
+            saveTrainingParams.saveExerciseParams.map { it.name }
         ).associateBy { it.name }
 
-        val exercises = trainingParams.exercises.map {
+        val exercises = saveTrainingParams.saveExerciseParams.map {
             Exercise(
                 null,
                 existingDescriptions[it.name] ?: exerciseDescriptionRepository.save(
@@ -68,13 +85,28 @@ open class TrainingServiceImpl @Autowired constructor(
             Training(
                 existingTraining?.id,
                 userId,
-                trainingParams.name,
+                saveTrainingParams.name,
                 false,
-                trainingParams.creationTime,
+                saveTrainingParams.creationTime,
                 exercises
             ).apply {
                 this.exercises.forEach { it.training = this }
             }
         )
+    }
+
+    private fun equalExercises(exercise: Exercise, saveParams: SaveExerciseParams): Boolean {
+
+        return exercise.exerciseDescription.name == saveParams.name &&
+                exercise.repsCount == saveParams.repsCount &&
+                exercise.setsCount == saveParams.setsCount &&
+                exercise.weight == saveParams.weight
+    }
+
+    private fun equalSets(set: Set, saveParams: SaveSetParams, number: Int): Boolean {
+
+        return set.number == number &&
+                set.repsCount == saveParams.repsCount &&
+                set.weight == saveParams.weight
     }
 }
