@@ -17,16 +17,16 @@ class Set(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(name = "number")
-    val number: Int,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercise_id")
-    val exercise: Exercise,
+    @Column(name = "index")
+    val index: Int,
 
     @Column(name = "reps_count")
     val repsCount: Int,
 
     @Column(name = "weight")
-    val weight: Float
+    val weight: Float,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_id")
+    var exercise: FullExercise? = null
 )

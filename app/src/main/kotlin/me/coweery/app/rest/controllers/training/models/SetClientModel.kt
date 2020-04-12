@@ -3,12 +3,15 @@ package me.coweery.app.rest.controllers.training.models
 import com.fasterxml.jackson.annotation.JsonProperty
 import me.coweery.app.exceptions.InvalidInputException
 
-class SetRequest(
+class SetClientModel(
+    @JsonProperty("id")
+    val id: Long? = null,
+
     @JsonProperty("repsCount")
-    val repsCount: Int?,
+    val repsCount: Int? = null,
 
     @JsonProperty("weight")
-    val weight: Float?
+    val weight: Float? = null
 ) {
 
     fun validate() {

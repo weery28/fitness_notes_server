@@ -5,5 +5,6 @@ CREATE TABLE exercises
     training_id             BIGINT REFERENCES trainings (id),
     sets_count              INT,
     weight                  FLOAT,
-    reps_count              INT
+    reps_count              INT,
+    index                   INT
 );

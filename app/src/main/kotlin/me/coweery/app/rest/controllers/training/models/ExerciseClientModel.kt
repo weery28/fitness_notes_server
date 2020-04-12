@@ -3,7 +3,10 @@ package me.coweery.app.rest.controllers.training.models
 import com.fasterxml.jackson.annotation.JsonProperty
 import me.coweery.app.exceptions.InvalidInputException
 
-class ExerciseRequest(
+class ExerciseClientModel(
+    @JsonProperty("id")
+    val id: Long? = null,
+
     @JsonProperty("name")
     val name: String? = null,
 
@@ -17,7 +20,7 @@ class ExerciseRequest(
     val repsCount: Int? = null,
 
     @JsonProperty("sets")
-    val sets: List<SetRequest>? = emptyList()
+    val sets: List<SetClientModel> = emptyList()
 ) {
 
     fun validate() {

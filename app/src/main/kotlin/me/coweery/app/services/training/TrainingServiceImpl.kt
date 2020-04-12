@@ -1,12 +1,12 @@
 package me.coweery.app.services.training
 
-import me.coweery.app.exceptions.NotFoundException
-import me.coweery.app.models.training.Exercise
 import me.coweery.app.models.training.ExerciseDescription
+import me.coweery.app.models.training.FullExercise
+import me.coweery.app.models.training.FullTraining
 import me.coweery.app.models.training.Set
-import me.coweery.app.models.training.Training
 import me.coweery.app.repositories.ExerciseDescriptionRepository
 import me.coweery.app.repositories.ExerciseRepository
+import me.coweery.app.repositories.FullTrainingRepository
 import me.coweery.app.repositories.TrainingRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -16,97 +16,140 @@ import org.springframework.transaction.annotation.Transactional
 open class TrainingServiceImpl @Autowired constructor(
     private val trainingRepository: TrainingRepository,
     private val exerciseDescriptionRepository: ExerciseDescriptionRepository,
-    private val exerciseRepository: ExerciseRepository
+    private val exerciseRepository: ExerciseRepository,
+    private val fullTrainingRepository: FullTrainingRepository
 ) : TrainingService {
 
-    override fun save(training: Training): Training {
-
-        return trainingRepository.findByUserIdAndCreationTime(training.userId, training.creationTime)
-            ?: trainingRepository.save(training)
-    }
-
-    override fun update(training: Training): Training {
-
-        return if (trainingRepository.existsByIdAndUserId(training.id!!, training.userId)) {
-            throw NotFoundException("Training with id = ${training.id} not found for user")
-        } else {
-            trainingRepository.save(training)
-        }
-    }
-
     @Transactional
-    override fun save(saveTrainingParams: SaveTrainingParams, userId: Long): Training {
+    override fun save(trainingSaveModel: TrainingSaveModel, userId: Long): FullTraining {
 
-        val existingTraining = trainingRepository.findByUserIdAndCreationTime(userId, saveTrainingParams.creationTime)
-
-        if (existingTraining != null) {
-            val exercisesForSaving = saveTrainingParams.saveExerciseParams
-                .filter { saveExerciseParams ->
-                    existingTraining.exercises.firstOrNull { equalExercises(it, saveExerciseParams) } == null
-                }
-
-            val exercisesForDeleting = existingTraining.exercises
-                .filter { existingExercise ->
-                    saveTrainingParams.saveExerciseParams.firstOrNull { equalExercises(existingExercise, it) } == null
-                }
+        val exitingTraining = fullTrainingRepository.findByUserIdAndCreationDate(userId, trainingSaveModel.creationTime)
+        return if (exitingTraining == null) {
+            createTraining(trainingSaveModel, userId)
         } else {
-
+            updateTraining(exitingTraining, trainingSaveModel)
         }
+    }
 
+    private fun createTraining(trainingSaveModel: TrainingSaveModel, userId: Long): FullTraining {
 
+        val descriptions = getExerciseDescriptions(trainingSaveModel)
 
-        val t = existingTraining?.exercises?.firstOrNull()?.id
-
-        val existingDescriptions = exerciseDescriptionRepository.getAllByNameIn(
-            saveTrainingParams.saveExerciseParams.map { it.name }
-        ).associateBy { it.name }
-
-        val exercises = saveTrainingParams.saveExerciseParams.map {
-            Exercise(
-                null,
-                existingDescriptions[it.name] ?: exerciseDescriptionRepository.save(
-                    ExerciseDescription(
-                        null,
-                        it.name
-                    )
-                ),
-                null,
-                it.setsCount,
-                it.weight,
-                it.repsCount
-            )
-        }
-
-        existingTraining?.exercises
-            ?.map { it.id!! }
-            ?.let { exerciseRepository.deleteByIdIn(it) }
-
-        return trainingRepository.save(
-            Training(
-                existingTraining?.id,
-                userId,
-                saveTrainingParams.name,
-                false,
-                saveTrainingParams.creationTime,
-                exercises
-            ).apply {
-                this.exercises.forEach { it.training = this }
+        return FullTraining(
+            null,
+            userId,
+            trainingSaveModel.name,
+            trainingSaveModel.isComplete,
+            trainingSaveModel.creationTime,
+            trainingSaveModel.date
+        ).apply {
+            exercises = trainingSaveModel.exercises.map {
+                FullExercise(
+                    null,
+                    descriptions[it.name]!!,
+                    null,
+                    it.setsCount,
+                    it.weight,
+                    it.repsCount,
+                    it.index
+                ).apply {
+                    sets = it.sets.map {
+                        Set(
+                            null,
+                            it.index,
+                            it.repsCount,
+                            it.weight,
+                            null
+                        )
+                    }
+                }
             }
-        )
+        }
+            .let {
+                fullTrainingRepository.save(it)
+            }
     }
 
-    private fun equalExercises(exercise: Exercise, saveParams: SaveExerciseParams): Boolean {
+    private fun updateTraining(existingTraining: FullTraining, trainingSaveModel: TrainingSaveModel): FullTraining {
 
-        return exercise.exerciseDescription.name == saveParams.name &&
-                exercise.repsCount == saveParams.repsCount &&
-                exercise.setsCount == saveParams.setsCount &&
-                exercise.weight == saveParams.weight
+        val descriptions = getExerciseDescriptions(trainingSaveModel)
+
+        return FullTraining(
+            existingTraining.id,
+            existingTraining.userId,
+            trainingSaveModel.name,
+            trainingSaveModel.isComplete,
+            trainingSaveModel.creationTime,
+            trainingSaveModel.date
+        ).apply {
+            //            val exercisesIdsForDelete = existingTraining.exercises
+//                .asSequence()
+//                .filter { existingExercise ->
+//                    trainingSaveModel.exercises.firstOrNull {
+//                        it.id == existingExercise.id
+//                    } == null
+//                }
+//                .map { it.id!! }
+//                .toList()
+//
+//            exerciseRepository.deleteByIdIn(exercisesIdsForDelete)
+
+            val exercisesWithExistingExercises = trainingSaveModel.exercises.map { exercise ->
+                Pair(
+                    exercise,
+                    existingTraining.exercises.firstOrNull { exercise.id == it.id }
+                )
+            }
+            exercises = exercisesWithExistingExercises.map { (exerciseSaveModel, existingExercise) ->
+                FullExercise(
+                    existingExercise?.id,
+                    descriptions[exerciseSaveModel.name]!!,
+                    null,
+                    exerciseSaveModel.setsCount,
+                    exerciseSaveModel.weight,
+                    exerciseSaveModel.repsCount,
+                    exerciseSaveModel.index
+                ).apply {
+                    val setsWithExistingSets = exerciseSaveModel.sets.map { set ->
+                        Pair(
+                            set,
+                            existingExercise?.sets?.firstOrNull { set.id == it.id }
+                        )
+                    }
+
+                    sets = setsWithExistingSets.map { (setSaveModel, existingSet) ->
+                        Set(
+                            existingSet?.id,
+                            setSaveModel.index,
+                            setSaveModel.repsCount,
+                            setSaveModel.weight,
+                            null
+                        )
+                    }
+                }
+            }
+        }
+            .let {
+                fullTrainingRepository.save(it)
+            }
     }
 
-    private fun equalSets(set: Set, saveParams: SaveSetParams, number: Int): Boolean {
+    private fun getExerciseDescriptions(saveModel: TrainingSaveModel): Map<String, ExerciseDescription> {
 
-        return set.number == number &&
-                set.repsCount == saveParams.repsCount &&
-                set.weight == saveParams.weight
+        val names = saveModel.exercises.map { it.name }
+        val existingDescriptions = exerciseDescriptionRepository.getAllByNameIn(names)
+            .associateBy { it.name }
+        val notExisting = names
+            .asSequence()
+            .filter { existingDescriptions[it] == null }
+            .map { ExerciseDescription(null, it) }
+            .toList()
+
+        return existingDescriptions.toMutableMap()
+            .apply {
+                putAll(
+                    exerciseDescriptionRepository.saveAll(notExisting).associateBy { it.name }
+                )
+            }
     }
 }

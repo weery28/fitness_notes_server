@@ -8,7 +8,7 @@ import java.util.Date
 @Repository
 interface TrainingRepository : JpaRepository<Training, Long> {
 
-    fun findByUserIdAndCreationTime(userId: Long, creationTime: Date): Training?
+    fun findByUserIdAndCreationDate(userId: Long, creationDate: Date): Training?
 
     fun findAllByUserIdAndCreationTime(userId: Long, creationTime: Date): Training?
 
