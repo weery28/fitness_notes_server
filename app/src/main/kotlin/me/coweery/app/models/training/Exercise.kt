@@ -1,5 +1,6 @@
 package me.coweery.app.models.training
 
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -42,35 +43,41 @@ open class Exercise(
 
 @Entity
 @Table(name = "exercises")
-class FullExercise(
+open class FullExercise(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    var id: Long?,
+    open var id: Long?,
 
     @ManyToOne
     @JoinColumn(name = "exercise_description_id")
-    val exerciseDescription: ExerciseDescription,
+    open val exerciseDescription: ExerciseDescription,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_id")
-    var training: FullTraining?,
+    open var training: FullTraining?,
 
     @Column(name = "sets_count")
-    val setsCount: Int,
+    open val setsCount: Int,
 
     @Column(name = "weight")
-    val weight: Float,
+    open val weight: Float,
 
     @Column(name = "reps_count")
-    val repsCount: Int,
+    open val repsCount: Int,
 
     @Column(name = "index")
-    val index: Int
+    open val index: Int
 ) {
 
-    @OneToMany(mappedBy = "exercise", fetch = FetchType.EAGER)
-    var sets: List<Set> = emptyList()
+    @OneToMany(
+        mappedBy = "exercise",
+        fetch = FetchType.EAGER,
+        cascade = [CascadeType.PERSIST, CascadeType.MERGE],
+        orphanRemoval = true,
+        targetEntity = Set::class
+    )
+    open var sets: List<Set> = emptyList()
         set(value) {
             value.forEach { it.exercise = this }
             field = value

@@ -5,18 +5,14 @@ import me.coweery.app.models.training.FullExercise
 import me.coweery.app.models.training.FullTraining
 import me.coweery.app.models.training.Set
 import me.coweery.app.repositories.ExerciseDescriptionRepository
-import me.coweery.app.repositories.ExerciseRepository
 import me.coweery.app.repositories.FullTrainingRepository
-import me.coweery.app.repositories.TrainingRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 open class TrainingServiceImpl @Autowired constructor(
-    private val trainingRepository: TrainingRepository,
     private val exerciseDescriptionRepository: ExerciseDescriptionRepository,
-    private val exerciseRepository: ExerciseRepository,
     private val fullTrainingRepository: FullTrainingRepository
 ) : TrainingService {
 
@@ -82,17 +78,6 @@ open class TrainingServiceImpl @Autowired constructor(
             trainingSaveModel.creationTime,
             trainingSaveModel.date
         ).apply {
-            //            val exercisesIdsForDelete = existingTraining.exercises
-//                .asSequence()
-//                .filter { existingExercise ->
-//                    trainingSaveModel.exercises.firstOrNull {
-//                        it.id == existingExercise.id
-//                    } == null
-//                }
-//                .map { it.id!! }
-//                .toList()
-//
-//            exerciseRepository.deleteByIdIn(exercisesIdsForDelete)
 
             val exercisesWithExistingExercises = trainingSaveModel.exercises.map { exercise ->
                 Pair(

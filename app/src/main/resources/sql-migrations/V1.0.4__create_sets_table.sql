@@ -1,4 +1,4 @@
-CREATE TABLE exercise_approaches
+CREATE TABLE sets
 (
     id          BIGSERIAL PRIMARY KEY,
     exercise_id BIGINT REFERENCES exercises (id),

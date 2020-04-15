@@ -37,35 +37,36 @@ open class Training(
 
 @Entity
 @Table(name = "trainings")
-class FullTraining(
+open class FullTraining(
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    open val id: Long? = null,
 
     @Column(name = "user_id")
-    val userId: Long,
+    open val userId: Long,
 
     @Column(name = "name")
-    val name: String,
+    open val name: String,
 
     @Column(name = "is_complete")
-    val isComplete: Boolean,
+    open val isComplete: Boolean,
 
     @Column(name = "creation_date")
-    val creationDate: Date,
+    open val creationDate: Date,
 
     @Column(name = "date")
-    val date: Date
+    open val date: Date
 ) {
 
     @OneToMany(
         mappedBy = "training",
         fetch = FetchType.EAGER,
         cascade = [CascadeType.PERSIST, CascadeType.MERGE],
-        orphanRemoval = true
+        orphanRemoval = true,
+        targetEntity = FullExercise::class
     )
-    var exercises: List<FullExercise> = emptyList()
+    open var exercises: List<FullExercise> = emptyList()
         set(value) {
             value.forEach { it.training = this }
             field = value
