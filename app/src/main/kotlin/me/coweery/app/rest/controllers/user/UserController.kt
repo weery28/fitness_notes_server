@@ -6,6 +6,7 @@ import me.coweery.app.rest.controllers.user.models.UserClientModel
 import me.coweery.app.services.user.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -17,7 +18,7 @@ class UserController @Autowired constructor(
 
     @PostMapping
     fun create(
-        createUserRequest: CreateUserRequest
+        @RequestBody createUserRequest: CreateUserRequest
     ): UserClientModel {
 
         return createUserRequest.validate()
