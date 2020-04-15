@@ -78,7 +78,6 @@ open class TrainingServiceImpl @Autowired constructor(
             trainingSaveModel.creationTime,
             trainingSaveModel.date
         ).apply {
-
             val exercisesWithExistingExercises = trainingSaveModel.exercises.map { exercise ->
                 Pair(
                     exercise,

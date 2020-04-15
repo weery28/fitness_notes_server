@@ -32,6 +32,12 @@ class TrainingClientModel(
         if (creationDate == null) {
             throw InvalidInputException("creationTime should be not null")
         }
+        if (isComplete == null) {
+            throw InvalidInputException("isComplete should be not null")
+        }
+        if (date == null) {
+            throw InvalidInputException("date should be not null")
+        }
         exercises.forEach { it.validate() }
         return this
     }
